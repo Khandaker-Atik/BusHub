@@ -170,9 +170,9 @@ Example questions:
 - "Tell me about Green Line's privacy policy"
 - "Which buses operate from Dhaka to Sylhet?"
 
-## 🎓 Assignment Context
+## 🎓 Context
 
-This project was developed as an internship selection assignment with the following requirements:
+This project was developed with the following requirements:
 
 ✅ Bus ticket booking functionality
 ✅ Search and filter capabilities
