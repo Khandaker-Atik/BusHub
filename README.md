@@ -2,6 +2,12 @@
 
 A modern, full-stack bus ticket booking application built with FastAPI, SQLite, and vanilla JavaScript. Features intelligent search with RAG (Retrieval-Augmented Generation) pipeline for bus provider information.
 
+## 🌐 Live Demo
+
+**🚀 [View Live Application](https://bushub.onrender.com/)**
+
+Try the application now without any installation!
+
 ## 📸 Screenshots
 
 ### Search Buses
