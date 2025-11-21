@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusHub - Your Premium Bus Booking Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        
+        .gradient-bg {
+            background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tab-active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Loader styles */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(22, 33, 62, 0.98) 50%, rgba(15, 52, 96, 0.98) 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loader-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .loader-container {
+            text-align: center;
+        }
+        
+        .bus-loader {
+            position: relative;
+            width: 120px;
+            height: 80px;
+            margin: 0 auto 30px;
+        }
+        
+        .bus-body {
+            position: absolute;
+            width: 100px;
+            height: 50px;
+            background: white;
+            border-radius: 10px;
+            animation: busMove 1.5s ease-in-out infinite;
+        }
+        
+        .bus-window {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #667eea;
+            border-radius: 3px;
+            top: 10px;
+        }
+        
+        .bus-window:nth-child(1) { left: 10px; }
+        .bus-window:nth-child(2) { left: 30px; }
+        .bus-window:nth-child(3) { left: 50px; }
+        .bus-window:nth-child(4) { left: 70px; }
+        
+        .bus-wheel {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #764ba2;
+            border-radius: 50%;
+            bottom: -10px;
+            animation: wheelRotate 0.5s linear infinite;
+        }
+        
+        .bus-wheel:nth-child(1) { left: 15px; }
+        .bus-wheel:nth-child(2) { right: 15px; }
+        
+        @keyframes busMove {
+            0%, 100% { transform: translateX(-20px); }
+            50% { transform: translateX(20px); }
+        }
+        
+        @keyframes wheelRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-road {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+        
+        .road-line {
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background: white;
+            animation: roadMove 1s linear infinite;
+        }
+        
+        .road-line:nth-child(1) { left: 0; }
+        .road-line:nth-child(2) { left: 50px; }
+        .road-line:nth-child(3) { left: 100px; }
+        
+        @keyframes roadMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-150px); }
+        }
+        
+        .loader-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .loader-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .hidden-mobile {
+                display: none !important;
+            }
+            
+            .mobile-menu {
+                display: block !important;
+            }
+            
+            .hero-title {
+                font-size: 2rem !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loader Overlay -->
+    <div id="loaderOverlay" class="loader-overlay">
+        <div class="loader-container">
+            <div class="bus-loader">
+                <div class="bus-body">
+                    <div class="bus-window"></div>
+                    <div class="bus-window"></div>
+                    <div class="bus-window"></div>
+                    <div class="bus-window"></div>
+                </div>
+                <div class="bus-wheel"></div>
+                <div class="bus-wheel"></div>
+                <div class="loader-road">
+                    <div class="road-line"></div>
+                    <div class="road-line"></div>
+                    <div class="road-line"></div>
+                </div>
+            </div>
+            <div class="loader-text">LOADING</div>
+            <div class="loader-subtext">Please wait...</div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="gradient-bg shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-bus text-white text-2xl sm:text-3xl animate-float"></i>
+                    <h1 class="text-white text-xl sm:text-2xl font-bold">BusHub</h1>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#home" class="text-white hover:text-gray-200 transition">Home</a>
+                    <a href="#search" onclick="showTabWithLoader('search')" class="text-white hover:text-gray-200 transition cursor-pointer">Search Buses</a>
+                    <a href="#bookings" onclick="showTabWithLoader('bookings')" class="text-white hover:text-gray-200 transition cursor-pointer">My Bookings</a>
+                    <a href="#rag" onclick="showTabWithLoader('rag')" class="text-white hover:text-gray-200 transition cursor-pointer">Ask AI</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-2">
+                <a href="#home" class="block text-white hover:text-gray-200 transition py-2">Home</a>
+                <a href="#search" onclick="showTabWithLoader('search')" class="block text-white hover:text-gray-200 transition cursor-pointer py-2">Search Buses</a>
+                <a href="#bookings" onclick="showTabWithLoader('bookings')" class="block text-white hover:text-gray-200 transition cursor-pointer py-2">My Bookings</a>
+                <a href="#rag" onclick="showTabWithLoader('rag')" class="block text-white hover:text-gray-200 transition cursor-pointer py-2">Ask AI</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg text-white py-12 sm:py-20">
+        <div class="container mx-auto px-4 sm:px-6 text-center">
+            <h2 class="hero-title text-3xl sm:text-5xl font-bold mb-4 fade-in">Welcome to BusHub</h2>
+            <p class="hero-subtitle text-base sm:text-xl mb-8 opacity-90">Your Premium Bus Booking Experience - Fast, Easy & Reliable</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 sm:space-x-4">
+                <button onclick="showTabWithLoader('search')" class="bg-white text-purple-600 px-6 sm:px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition transform hover:scale-105 w-full sm:w-auto">
+                    <i class="fas fa-search mr-2"></i>Search Buses
+                </button>
+                <button onclick="showTabWithLoader('rag')" class="bg-transparent border-2 border-white text-white px-6 sm:px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition w-full sm:w-auto">
+                    <i class="fas fa-robot mr-2"></i>Ask AI Assistant
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-16">
+                <div class="glass-effect p-4 sm:p-6 rounded-xl card-hover">
+                    <i class="fas fa-bolt text-purple-600 text-3xl sm:text-4xl mb-4"></i>
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Instant Booking</h3>
+                    <p class="text-sm sm:text-base text-gray-600">Book your tickets in seconds with our streamlined process</p>
+                </div>
+                <div class="glass-effect p-4 sm:p-6 rounded-xl card-hover">
+                    <i class="fas fa-shield-alt text-purple-600 text-3xl sm:text-4xl mb-4"></i>
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Secure & Safe</h3>
+                    <p class="text-sm sm:text-base text-gray-600">Your data is protected with enterprise-grade security</p>
+                </div>
+                <div class="glass-effect p-4 sm:p-6 rounded-xl card-hover">
+                    <i class="fas fa-headset text-purple-600 text-3xl sm:text-4xl mb-4"></i>
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-2">24/7 Support</h3>
+                    <p class="text-sm sm:text-base text-gray-600">Our AI assistant is always ready to help you</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <!-- Tab Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-6 sm:mb-8">
+            <button onclick="showTabWithLoader('search')" class="tab-btn tab-active px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base" id="tab-search">
+                <i class="fas fa-search mr-2"></i>Search Buses
+            </button>
+            <button onclick="showTabWithLoader('book')" class="tab-btn px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition text-sm sm:text-base" id="tab-book">
+                <i class="fas fa-ticket-alt mr-2"></i>Book Ticket
+            </button>
+            <button onclick="showTabWithLoader('bookings')" class="tab-btn px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition text-sm sm:text-base" id="tab-bookings">
+                <i class="fas fa-list mr-2"></i>My Bookings
+            </button>
+            <button onclick="showTabWithLoader('rag')" class="tab-btn px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition text-sm sm:text-base" id="tab-rag">
+                <i class="fas fa-robot mr-2"></i>AI Assistant
+            </button>
+        </div>
+
+        <!-- Search Buses Tab -->
+        <div id="content-search" class="tab-content fade-in">
+            <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-8 card-hover">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 gradient-text">
+                    <i class="fas fa-search mr-2"></i>Search Available Buses
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>From
+                        </label>
+                        <select id="searchFrom" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                            <option value="">Select origin city</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>To
+                        </label>
+                        <select id="searchTo" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                            <option value="">Select destination city</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-filter text-purple-600 mr-2"></i>Max Fare
+                        </label>
+                        <input type="number" id="maxFare" placeholder="e.g., 500" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                    </div>
+                </div>
+                <button onclick="searchBuses()" class="btn-gradient text-white px-8 py-3 rounded-lg font-semibold w-full md:w-auto">
+                    <i class="fas fa-search mr-2"></i>Search Buses
+                </button>
+                <div id="searchResults" class="mt-8"></div>
+            </div>
+        </div>
+
+        <!-- Book Ticket Tab -->
+        <div id="content-book" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 card-hover">
+                <h2 class="text-3xl font-bold mb-6 gradient-text">
+                    <i class="fas fa-ticket-alt mr-2"></i>Book Your Ticket
+                </h2>
+                <form id="bookingForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-user text-purple-600 mr-2"></i>Full Name
+                            </label>
+                            <input type="text" id="bookName" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition" placeholder="Enter your name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-phone text-purple-600 mr-2"></i>Phone Number
+                            </label>
+                            <input type="tel" id="bookPhone" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition" placeholder="01XXXXXXXXX">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>From
+                            </label>
+                            <select id="bookFrom" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                                <option value="">Select origin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>To
+                            </label>
+                            <select id="bookTo" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                                <option value="">Select destination</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-bus text-purple-600 mr-2"></i>Bus Provider
+                            </label>
+                            <select id="bookProvider" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                                <option value="">Select bus provider</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                <i class="fas fa-calendar text-purple-600 mr-2"></i>Travel Date
+                            </label>
+                            <input type="date" id="bookDate" required class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            <i class="fas fa-map-pin text-purple-600 mr-2"></i>Dropping Point
+                        </label>
+                        <select id="bookDropping" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                            <option value="">Select dropping point</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-gradient text-white px-8 py-4 rounded-lg font-semibold w-full text-lg">
+                        <i class="fas fa-check-circle mr-2"></i>Confirm Booking
+                    </button>
+                </form>
+                <div id="bookingResult" class="mt-6"></div>
+            </div>
+        </div>
+
+        <!-- My Bookings Tab -->
+        <div id="content-bookings" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 card-hover">
+                <h2 class="text-3xl font-bold mb-6 gradient-text">
+                    <i class="fas fa-list mr-2"></i>My Bookings
+                </h2>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-search text-purple-600 mr-2"></i>Search by Phone or Reference
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="searchBooking" placeholder="Enter phone number or booking reference" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition">
+                        <button onclick="loadBookings()" class="btn-gradient text-white px-6 py-3 rounded-lg font-semibold">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="bookingsList"></div>
+            </div>
+        </div>
+
+        <!-- AI Assistant Tab -->
+        <div id="content-rag" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 card-hover">
+                <h2 class="text-3xl font-bold mb-6 gradient-text">
+                    <i class="fas fa-robot mr-2"></i>AI Assistant
+                </h2>
+                <p class="text-gray-600 mb-6">Ask me anything about bus providers, routes, or travel information!</p>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-question-circle text-purple-600 mr-2"></i>Your Question
+                    </label>
+                    <textarea id="ragQuestion" rows="3" placeholder="e.g., What are the contact details of Hanif Bus?" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none transition"></textarea>
+                </div>
+                <button onclick="askRAG()" class="btn-gradient text-white px-8 py-3 rounded-lg font-semibold">
+                    <i class="fas fa-paper-plane mr-2"></i>Ask AI
+                </button>
+                <div id="ragAnswer" class="mt-6"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-8 mt-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="hover:text-gray-200 transition"><i class="fab fa-facebook text-2xl"></i></a>
+                <a href="#" class="hover:text-gray-200 transition"><i class="fab fa-twitter text-2xl"></i></a>
+                <a href="#" class="hover:text-gray-200 transition"><i class="fab fa-instagram text-2xl"></i></a>
+            </div>
+            <p class="opacity-90">&copy; 2025 BusHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
